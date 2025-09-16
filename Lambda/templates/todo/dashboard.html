@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}ダッシュボード - {{ username }}{% endblock title %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1 class="title">
+      <span class="icon">
+        <i class="fas fa-tachometer-alt"></i>
+      </span>
+      ダッシュボード
+    </h1>
+    
+    <!-- 統計カード -->
+    <div class="columns">
+      <div class="column is-3">
+        <div class="box has-text-centered">
+          <p class="title is-1 has-text-info">{{ total_todos }}</p>
+          <p class="subtitle">総Todo数</p>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="box has-text-centered">
+          <p class="title is-1 has-text-success">{{ completed_todos }}</p>
+          <p class="subtitle">完了済み</p>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="box has-text-centered">
+          <p class="title is-1 has-text-warning">{{ pending_todos }}</p>
+          <p class="subtitle">未完了</p>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="box has-text-centered">
+          <p class="title is-1 has-text-danger">{{ priority_stats.high }}</p>
+          <p class="subtitle">高優先度</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- クイックアクション -->
+    <div class="box">
+      <h2 class="title is-4">クイックアクション</h2>
+      <div class="buttons">
+        <a href="{{ reverse(master, 'todo:todo_create', username=username) }}" class="button is-primary">
+          <span class="icon">
+            <i class="fas fa-plus"></i>
+          </span>
+          <span>新しいTodo</span>
+        </a>
+        <a href="{{ reverse(master, 'todo:todo_list', username=username) }}" class="button is-info">
+          <span class="icon">
+            <i class="fas fa-list"></i>
+          </span>
+          <span>Todo一覧</span>
+        </a>
+        <a href="{{ reverse(master, 'todo:category_list', username=username) }}" class="button is-link">
+          <span class="icon">
+            <i class="fas fa-tags"></i>
+          </span>
+          <span>カテゴリー管理</span>
+        </a>
+      </div>
+    </div>
+    
+    <!-- 最近のTodo -->
+    {% if recent_todos %}
+    <div class="box">
+      <h2 class="title is-4">最近のTodo</h2>
+      <div class="table-container">
+        <table class="table is-fullwidth">
+          <thead>
+            <tr>
+              <th>タイトル</th>
+              <th>優先度</th>
+              <th>状態</th>
+              <th>作成日</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for todo in recent_todos %}
+            <tr>
+              <td>{{ todo.title }}</td>
+              <td>
+                {% if todo.priority == 'high' %}
+                  <span class="tag is-danger">高</span>
+                {% elif todo.priority == 'medium' %}
+                  <span class="tag is-warning">中</span>
+                {% else %}
+                  <span class="tag is-info">低</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if todo.completed %}
+                  <span class="tag is-success">完了</span>
+                {% else %}
+                  <span class="tag is-light">未完了</span>
+                {% endif %}
+              </td>
+              <td>{{ todo.created_at[:10] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock content %}

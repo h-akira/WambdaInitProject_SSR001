@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}メール確認 - 将棋プロジェクト{% endblock title %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-half">
+                <div class="card">
+                    <header class="card-header">
+                        <p class="card-header-title">
+                            メールアドレス確認
+                        </p>
+                    </header>
+                    <div class="card-content">
+                        {% if error %}
+                        <div class="notification is-danger">
+                            {{ error }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if message %}
+                        <div class="notification is-success">
+                            {{ message }}
+                        </div>
+                        {% endif %}
+                        
+                        <p class="mb-4">
+                            メールアドレスに送信された確認コードを入力してください。
+                        </p>
+                        
+                        <form method="post">
+                            <div class="field">
+                                <label class="label">{{ form.username.label }}</label>
+                                <div class="control">
+                                    {{ form.username(class="input") }}
+                                </div>
+                                {% if form.username.errors %}
+                                <div class="help is-danger">
+                                    {% for error in form.username.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="field">
+                                <label class="label">{{ form.code.label }}</label>
+                                <div class="control">
+                                    {{ form.code(class="input") }}
+                                </div>
+                                {% if form.code.errors %}
+                                <div class="help is-danger">
+                                    {% for error in form.code.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="field">
+                                <div class="control">
+                                    <button type="submit" class="button is-primary is-fullwidth">
+                                        確認
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <footer class="card-footer">
+                        <a href="{{ get_login_url(master) }}" class="card-footer-item">
+                            ログイン
+                        </a>
+                        <a href="{{ reverse(master, 'home') }}" class="card-footer-item">
+                            ホームに戻る
+                        </a>
+                    </footer>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

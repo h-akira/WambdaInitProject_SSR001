@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}カテゴリー管理 - {{ username }}{% endblock title %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="level">
+      <div class="level-left">
+        <h1 class="title">
+          <span class="icon">
+            <i class="fas fa-tags"></i>
+          </span>
+          カテゴリー管理
+        </h1>
+      </div>
+      <div class="level-right">
+        <a href="{{ reverse(master, 'todo:category_create', username=username) }}" class="button is-primary">
+          <span class="icon">
+            <i class="fas fa-plus"></i>
+          </span>
+          <span>新しいカテゴリー</span>
+        </a>
+      </div>
+    </div>
+    
+    {% if categories %}
+    <div class="box">
+      <div class="table-container">
+        <table class="table is-fullwidth is-striped">
+          <thead>
+            <tr>
+              <th>カテゴリー名</th>
+              <th>カラー</th>
+              <th>作成日</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for category in categories %}
+            <tr>
+              <td>
+                <span class="tag is-{{ category.color }}">{{ category.name }}</span>
+              </td>
+              <td>{{ category.color }}</td>
+              <td>{{ category.created_at[:10] }}</td>
+              <td>
+                <div class="buttons are-small">
+                  <a href="{{ reverse(master, 'todo:category_edit', username=username, category_id=category.sk) }}" 
+                     class="button is-info">
+                    <span class="icon">
+                      <i class="fas fa-edit"></i>
+                    </span>
+                  </a>
+                  <a href="{{ reverse(master, 'todo:category_delete', username=username, category_id=category.sk) }}" 
+                     class="button is-danger"
+                     onclick="return confirm('このカテゴリーを削除しますか？')">
+                    <span class="icon">
+                      <i class="fas fa-trash"></i>
+                    </span>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% else %}
+    <div class="box has-text-centered">
+      <p class="title is-4 has-text-grey-light">カテゴリーがありません</p>
+      <p class="subtitle is-6 has-text-grey-light">新しいカテゴリーを作成してTodoを整理しましょう</p>
+      <a href="{{ reverse(master, 'todo:category_create', username=username) }}" class="button is-primary">
+        <span class="icon">
+          <i class="fas fa-plus"></i>
+        </span>
+        <span>最初のカテゴリーを作成</span>
+      </a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock content %}

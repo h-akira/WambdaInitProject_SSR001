@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {% if action == 'create' %}
+    カテゴリー作成 - {{ username }}
+  {% else %}
+    カテゴリー編集 - {{ username }}
+  {% endif %}
+{% endblock title %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1 class="title">
+      <span class="icon">
+        {% if action == 'create' %}
+          <i class="fas fa-plus"></i>
+        {% else %}
+          <i class="fas fa-edit"></i>
+        {% endif %}
+      </span>
+      {% if action == 'create' %}
+        新しいカテゴリー
+      {% else %}
+        カテゴリー編集
+      {% endif %}
+    </h1>
+    
+    <div class="columns">
+      <div class="column is-6">
+        <div class="box">
+          <form method="post">
+            {{ form.csrf_token }}
+            
+            <div class="field">
+              <label class="label">{{ form.name.label }}</label>
+              <div class="control">
+                {{ form.name(class="input") }}
+              </div>
+              {% if form.name.errors %}
+                {% for error in form.name.errors %}
+                  <p class="help is-danger">{{ error }}</p>
+                {% endfor %}
+              {% endif %}
+            </div>
+            
+            <div class="field">
+              <label class="label">{{ form.color.label }}</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  {{ form.color }}
+                </div>
+              </div>
+              {% if form.color.errors %}
+                {% for error in form.color.errors %}
+                  <p class="help is-danger">{{ error }}</p>
+                {% endfor %}
+              {% endif %}
+            </div>
+            
+            <div class="field is-grouped">
+              <div class="control">
+                <button type="submit" class="button is-primary">
+                  <span class="icon">
+                    <i class="fas fa-save"></i>
+                  </span>
+                  <span>保存</span>
+                </button>
+              </div>
+              <div class="control">
+                <a href="{{ reverse(master, 'todo:category_list', username=username) }}" class="button">
+                  <span class="icon">
+                    <i class="fas fa-arrow-left"></i>
+                  </span>
+                  <span>戻る</span>
+                </a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}

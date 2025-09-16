@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Not Found{% endblock title %}
+{% block content %}
+<div class="padding-all">
+  <h1 class="title is-1 has-text-centered">ページが見つかりません。</h1>
+  <div class="img-center">
+    <img src="{{ static(master, 'images/not_found.png') }}">
+  </div>
+</div>
+{% endblock content %}
+
