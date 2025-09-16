@@ -53,7 +53,7 @@ Parameters:
     Description: 'Set to true to deny login during maintenance.'
   DynamoDBTable:
     Type: String
-    Default: 'table-hads-sample-main'
+    Default: 'wambda-table-ssr001'
     Description: 'DynamoDB table name for the application.'
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
@@ -70,7 +70,7 @@ Resources:
   ApiGatewayAccessLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub '/aws/apigateway/hads-sample-${AWS::StackName}-access-logs'
+      LogGroupName: !Sub '/aws/apigateway/wambda-ssr001-${AWS::StackName}-access-logs'
       RetentionInDays: 7
 
   # IAM Role for API Gateway to push logs to CloudWatch
@@ -91,7 +91,7 @@ Resources:
   ApiGatewayAccountConfigFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub 'hads-sample-${AWS::StackName}-apigateway-account-config'
+      FunctionName: !Sub 'wambda-ssr001-${AWS::StackName}-apigateway-account-config'
       Runtime: python3.13
       Handler: index.handler
       Role: !GetAtt ApiGatewayAccountConfigRole.Arn
@@ -162,7 +162,7 @@ Resources:
     Type: AWS::Serverless::Api
     DependsOn: ApiGatewayAccountConfig
     Properties:
-      Name: 'api-hads-sample-main'
+      Name: 'api-wambda-ssr001-main'
       StageName: 'stage-01'
       EndpointConfiguration: REGIONAL
       AccessLogSetting:
@@ -177,7 +177,7 @@ Resources:
   MainFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: 'lambda-hads-sample-main'
+      FunctionName: 'lambda-wambda-ssr001-main'
       CodeUri: Lambda/
       Handler: lambda_function.lambda_handler
       Runtime: python3.13
@@ -210,7 +210,7 @@ Resources:
   LambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: 'role-hads-sample-lambda-exec'
+      RoleName: 'role-wambda-ssr001-lambda-exec'
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -222,7 +222,7 @@ Resources:
         - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
         - "arn:aws:iam::aws:policy/AmazonCognitoPowerUser"
       Policies:
-        - PolicyName: "policy-hads-sample-lambda-exec"
+        - PolicyName: "policy-wambda-ssr001-lambda-exec"
           PolicyDocument:
             Version: "2012-10-17"
             Statement:

@@ -3,7 +3,7 @@
 version = 0.1
 
 [default.global.parameters]
-stack_name = "stack-hads-sample-main"
+stack_name = "stack-wambda-ssr001-main"
 
 [default.build.parameters]
 cached = true

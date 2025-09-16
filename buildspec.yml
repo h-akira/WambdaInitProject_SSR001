@@ -8,9 +8,8 @@ env:
     WAMBDA_DENY_SIGNUP: "false"
     WAMBDA_DENY_LOGIN: "false"
     WAMBDA_LOG_LEVEL: "DEBUG"
-    S3_BUCKET: "hakira0627-sgp-pro-main"
-    DYNAMODB_TABLE: "table-sgp-pro-main"
-    SQS_QUEUE_NAME: "sqs-sgp-analysis.fifo"
+    S3_BUCKET: "wambda-ssr001-main"
+    DYNAMODB_TABLE: "wambda-table-ssr001"
 
 phases:
   install:
@@ -21,4 +20,4 @@ phases:
       - aws s3 sync static/ s3://$S3_BUCKET/CloudFront/static --delete
       - aws s3 cp favicon/favicon.ico s3://$S3_BUCKET/CloudFront/favicon.ico
       - sam build
-      - sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --parameter-overrides ParameterKey=DEBUG,ParameterValue=$WAMBDA_DEBUG ParameterKey=UseMock,ParameterValue=$WAMBDA_USE_MOCK ParameterKey=NoAuth,ParameterValue=$WAMBDA_NO_AUTH ParameterKey=DenySignup,ParameterValue=$WAMBDA_DENY_SIGNUP ParameterKey=DenyLogin,ParameterValue=$WAMBDA_DENY_LOGIN ParameterKey=LogLevel,ParameterValue=$WAMBDA_LOG_LEVEL ParameterKey=DynamoDBTable,ParameterValue=$DYNAMODB_TABLE ParameterKey=SQSQueueName,ParameterValue=$SQS_QUEUE_NAME
+      - sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --parameter-overrides ParameterKey=DEBUG,ParameterValue=$WAMBDA_DEBUG ParameterKey=UseMock,ParameterValue=$WAMBDA_USE_MOCK ParameterKey=NoAuth,ParameterValue=$WAMBDA_NO_AUTH ParameterKey=DenySignup,ParameterValue=$WAMBDA_DENY_SIGNUP ParameterKey=DenyLogin,ParameterValue=$WAMBDA_DENY_LOGIN ParameterKey=LogLevel,ParameterValue=$WAMBDA_LOG_LEVEL ParameterKey=DynamoDBTable,ParameterValue=$DYNAMODB_TABLE
