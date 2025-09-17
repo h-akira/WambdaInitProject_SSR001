@@ -40,33 +40,41 @@ def set_data():
         },
         # サンプルカテゴリー
         {
-            'pk': 'user#testuser#category',
-            'sk': 'category001',
+            'pk': 'user#testuser',
+            'sk': 'category#category001',
+            'id': 'category001',
+            'entity_type': 'category',
             'name': '仕事',
-            'color': 'blue',
+            'color': 'primary',
             'created_at': '2024-01-01T00:00:00.000Z',
             'updated_at': '2024-01-01T00:00:00.000Z'
         },
         {
-            'pk': 'user#testuser#category',
-            'sk': 'category002', 
+            'pk': 'user#testuser',
+            'sk': 'category#category002', 
+            'id': 'category002',
+            'entity_type': 'category',
             'name': 'プライベート',
-            'color': 'green',
+            'color': 'success',
             'created_at': '2024-01-01T00:00:00.000Z',
             'updated_at': '2024-01-01T00:00:00.000Z'
         },
         {
-            'pk': 'user#testuser#category',
-            'sk': 'category003',
+            'pk': 'user#testuser',
+            'sk': 'category#category003',
+            'id': 'category003',
+            'entity_type': 'category',
             'name': '学習',
-            'color': 'purple',
+            'color': 'info',
             'created_at': '2024-01-01T00:00:00.000Z',
             'updated_at': '2024-01-01T00:00:00.000Z'
         },
         # サンプルTodo
         {
-            'pk': 'user#testuser#todo',
-            'sk': 'todo001',
+            'pk': 'user#testuser',
+            'sk': 'todo#todo001',
+            'id': 'todo001',
+            'entity_type': 'todo',
             'title': 'プロジェクトの企画書作成',
             'description': '新プロジェクトの企画書をドラフトして、関係者にレビューを依頼する',
             'priority': 'high',
@@ -76,8 +84,10 @@ def set_data():
             'updated_at': '2024-01-01T00:00:00.000Z'
         },
         {
-            'pk': 'user#testuser#todo',
-            'sk': 'todo002',
+            'pk': 'user#testuser',
+            'sk': 'todo#todo002',
+            'id': 'todo002',
+            'entity_type': 'todo',
             'title': 'WAMBDAフレームワークの学習',
             'description': 'ドキュメントを読んで基本機能を理解する',
             'priority': 'medium',
@@ -87,8 +97,10 @@ def set_data():
             'updated_at': '2024-01-02T00:00:00.000Z'
         },
         {
-            'pk': 'user#testuser#todo',
-            'sk': 'todo003',
+            'pk': 'user#testuser',
+            'sk': 'todo#todo003',
+            'id': 'todo003',
+            'entity_type': 'todo',
             'title': '友人との食事会',
             'description': '来週の土曜日に友人と食事の約束',
             'priority': 'low',
@@ -98,8 +110,10 @@ def set_data():
             'updated_at': '2024-01-03T00:00:00.000Z'
         },
         {
-            'pk': 'user#testuser#todo',
-            'sk': 'todo004',
+            'pk': 'user#testuser',
+            'sk': 'todo#todo004',
+            'id': 'todo004',
+            'entity_type': 'todo',
             'title': 'AWS請求書の確認',
             'description': '今月の請求額をチェックして、コスト最適化を検討',
             'priority': 'high',

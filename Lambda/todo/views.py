@@ -34,14 +34,68 @@ def delete_data_by_pk_sk(pk, sk):
     table = get_table()
     table.delete_item(Key={'pk': pk, 'sk': sk})
 
+def get_user_data_by_type(username, entity_type):
+    """ユーザーの特定エンティティタイプのデータを取得 (新設計)"""
+    table = get_table()
+    pk = f"user#{username}"
+    response = table.query(
+        KeyConditionExpression=boto3.dynamodb.conditions.Key('pk').eq(pk) & 
+                               boto3.dynamodb.conditions.Key('sk').begins_with(f"{entity_type}#")
+    )
+    return response['Items']
+
+def get_user_all_data(username):
+    """ユーザーの全データを取得 (新設計)"""
+    table = get_table()
+    pk = f"user#{username}"
+    response = table.query(KeyConditionExpression=boto3.dynamodb.conditions.Key('pk').eq(pk))
+    return response['Items']
+
+def create_todo_item(username, todo_data):
+    """新設計でTodoアイテムを作成"""
+    todo_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+    
+    item = {
+        'pk': f"user#{username}",
+        'sk': f"todo#{todo_id}",
+        'id': todo_id,  # 後方互換性のため
+        'entity_type': 'todo',
+        'title': todo_data.get('title', ''),
+        'description': todo_data.get('description', ''),
+        'priority': todo_data.get('priority', 'medium'),
+        'completed': todo_data.get('completed', False),
+        'category_id': todo_data.get('category_id', ''),
+        'created_at': now.isoformat(),
+        'updated_at': now.isoformat()
+    }
+    return item
+
+def create_category_item(username, category_data):
+    """新設計でCategoryアイテムを作成"""
+    category_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+    
+    item = {
+        'pk': f"user#{username}",
+        'sk': f"category#{category_id}",
+        'id': category_id,  # 後方互換性のため
+        'entity_type': 'category',
+        'name': category_data.get('name', ''),
+        'color': category_data.get('color', 'primary'),
+        'created_at': now.isoformat(),
+        'updated_at': now.isoformat()
+    }
+    return item
+
 @login_required
 def dashboard(master, username):
     """ダッシュボードページ"""
     if master.request.username != username:
         return redirect(master, "accounts:login")
     
-    # 最近のTodos取得
-    all_todos = get_data_by_pk(f"user#{username}#todo")
+    # 最近のTodos取得 (新設計を使用)
+    all_todos = get_user_data_by_type(username, 'todo')
     
     # 完了/未完了の統計
     total_todos = len(all_todos)
@@ -71,8 +125,8 @@ def todo_list(master, username):
     if master.request.username != username:
         return redirect(master, "accounts:login")
     
-    todos = get_data_by_pk(f"user#{username}#todo")
-    categories = get_data_by_pk(f"user#{username}#category")
+    todos = get_user_data_by_type(username, 'todo')
+    categories = get_user_data_by_type(username, 'category')
     
     # フィルタリング
     query_params = master.event.get('queryStringParameters') or {}
@@ -107,28 +161,22 @@ def todo_create(master, username):
     if master.request.username != username:
         return redirect(master, "accounts:login")
     
-    categories = get_data_by_pk(f"user#{username}#category")
+    categories = get_user_data_by_type(username, 'category')
     
     if master.request.method == "POST":
         form_data = master.request.get_form_data()
         form = TodoForm(form_data)
         if form.validate():
-            now = datetime.now(timezone.utc)
-            todo_id = str(uuid.uuid4())
-            
             todo_data = {
-                'pk': f"user#{username}#todo",
-                'sk': todo_id,
                 'title': form.data['title'],
                 'description': form.data['description'],
                 'priority': form.data['priority'],
                 'completed': form.data.get('completed', False),
-                'category_id': form_data.get('category_id', ''),
-                'created_at': now.isoformat(),
-                'updated_at': now.isoformat()
+                'category_id': form_data.get('category_id', '')
             }
             
-            put_data(todo_data)
+            item = create_todo_item(username, todo_data)
+            put_data(item)
             return redirect(master, "todo:todo_list", username=username)
     else:
         form = TodoForm()
@@ -148,11 +196,11 @@ def todo_edit(master, username, todo_id):
     if master.request.username != username:
         return redirect(master, "accounts:login")
     
-    todo = get_data_by_pk_sk(f"user#{username}#todo", todo_id)
+    todo = get_data_by_pk_sk(f"user#{username}", f"todo#{todo_id}")
     if not todo:
         return render(master, 'not_found.html', {}, code=404)
     
-    categories = get_data_by_pk(f"user#{username}#category")
+    categories = get_user_data_by_type(username, 'category')
     
     if master.request.method == "POST":
         form_data = master.request.get_form_data()
@@ -193,11 +241,11 @@ def todo_delete(master, username, todo_id):
     if master.request.username != username:
         return redirect(master, "accounts:login")
     
-    todo = get_data_by_pk_sk(f"user#{username}#todo", todo_id)
+    todo = get_data_by_pk_sk(f"user#{username}", f"todo#{todo_id}")
     if not todo:
         return render(master, 'not_found.html', {}, code=404)
     
-    delete_data_by_pk_sk(f"user#{username}#todo", todo_id)
+    delete_data_by_pk_sk(f"user#{username}", f"todo#{todo_id}")
     return redirect(master, "todo:todo_list", username=username)
 
 @login_required
@@ -206,7 +254,7 @@ def todo_toggle_complete(master, username, todo_id):
     if master.request.username != username:
         return redirect(master, "accounts:login")
     
-    todo = get_data_by_pk_sk(f"user#{username}#todo", todo_id)
+    todo = get_data_by_pk_sk(f"user#{username}", f"todo#{todo_id}")
     if todo:
         todo['completed'] = not todo.get('completed', False)
         todo['updated_at'] = datetime.now(timezone.utc).isoformat()
@@ -220,7 +268,7 @@ def category_list(master, username):
     if master.request.username != username:
         return redirect(master, "accounts:login")
     
-    categories = get_data_by_pk(f"user#{username}#category")
+    categories = get_user_data_by_type(username, 'category')
     
     context = {
         'username': username,
@@ -238,19 +286,13 @@ def category_create(master, username):
     if master.request.method == "POST":
         form = CategoryForm(master.request.get_form_data())
         if form.validate():
-            now = datetime.now(timezone.utc)
-            category_id = str(uuid.uuid4())
-            
             category_data = {
-                'pk': f"user#{username}#category",
-                'sk': category_id,
                 'name': form.data['name'],
-                'color': form.data['color'],
-                'created_at': now.isoformat(),
-                'updated_at': now.isoformat()
+                'color': form.data['color']
             }
             
-            put_data(category_data)
+            item = create_category_item(username, category_data)
+            put_data(item)
             return redirect(master, "todo:category_list", username=username)
     else:
         form = CategoryForm()
@@ -269,7 +311,7 @@ def category_edit(master, username, category_id):
     if master.request.username != username:
         return redirect(master, "accounts:login")
     
-    category = get_data_by_pk_sk(f"user#{username}#category", category_id)
+    category = get_data_by_pk_sk(f"user#{username}", f"category#{category_id}")
     if not category:
         return render(master, 'not_found.html', {}, code=404)
     
@@ -305,9 +347,9 @@ def category_delete(master, username, category_id):
     if master.request.username != username:
         return redirect(master, "accounts:login")
     
-    category = get_data_by_pk_sk(f"user#{username}#category", category_id)
+    category = get_data_by_pk_sk(f"user#{username}", f"category#{category_id}")
     if not category:
         return render(master, 'not_found.html', {}, code=404)
     
-    delete_data_by_pk_sk(f"user#{username}#category", category_id)
+    delete_data_by_pk_sk(f"user#{username}", f"category#{category_id}")
     return redirect(master, "todo:category_list", username=username)
