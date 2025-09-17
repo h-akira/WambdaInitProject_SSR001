@@ -111,11 +111,6 @@
   box-shadow: 0 4px 8px rgba(10, 10, 10, 0.15);
 }
 
-/* Prevent text duplication issues */
-.card .card-content * {
-  transition: none;
-  transform: none !important;
-}
 
 /* Table improvements */
 .table th {
@@ -128,15 +123,24 @@
 }
 
 /* Todo list improvements */
-.card .title {
-  position: relative;
-  z-index: 1;
+.todo-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.card .title.has-text-grey-light {
+.todo-title.is-completed {
+  color: #b5b5b5;
   text-decoration: line-through;
-  opacity: 0.7;
-  transition: none !important;
+  opacity: 0.8;
+}
+
+.todo-title-text {
+  flex: 1;
+  line-height: 1.2;
 }
 
 /* Responsive improvements */

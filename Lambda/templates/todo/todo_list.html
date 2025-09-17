@@ -74,14 +74,14 @@
             <div class="level-left">
               <div class="level-item">
                 <div>
-                  <p class="title is-5 {% if todo.completed %}has-text-grey-light{% endif %}">
+                  <div class="todo-title {% if todo.completed %}is-completed{% endif %}">
                     {% if todo.completed %}
                       <span class="icon has-text-success">
                         <i class="fas fa-check"></i>
                       </span>
                     {% endif %}
-                    {{ todo.title }}
-                  </p>
+                    <span class="todo-title-text">{{ todo.title }}</span>
+                  </div>
                   {% if todo.description %}
                   <p class="subtitle is-6 {% if todo.completed %}has-text-grey-light{% endif %}">{{ todo.description }}</p>
                   {% endif %}
