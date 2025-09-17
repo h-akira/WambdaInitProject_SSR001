@@ -285,9 +285,9 @@ def category_edit(master, username, category_id):
             put_data(category)
             return redirect(master, "todo:category_list", username=username)
     else:
-        form = CategoryForm({
+        form = CategoryForm(data={
             'name': category.get('name', ''),
-            'color': category.get('color', 'blue')
+            'color': category.get('color', 'primary')
         })
     
     context = {
