@@ -170,7 +170,7 @@ def todo_edit(master, username, todo_id):
             put_data(todo)
             return redirect(master, "todo:todo_list", username=username)
     else:
-        form = TodoForm({
+        form = TodoForm(data={
             'title': todo.get('title', ''),
             'description': todo.get('description', ''),
             'priority': todo.get('priority', 'medium'),
