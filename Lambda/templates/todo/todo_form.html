@@ -81,8 +81,8 @@
                       <select name="category_id">
                         <option value="">カテゴリーを選択</option>
                         {% for category in categories %}
-                          <option value="{{ category.sk }}" 
-                            {% if todo and todo.category_id == category.sk %}selected{% endif %}>
+                          <option value="{{ category.id }}" 
+                            {% if todo and todo.category_id == category.id %}selected{% endif %}>
                             {{ category.name }}
                           </option>
                         {% endfor %}

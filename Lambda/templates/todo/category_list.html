@@ -46,13 +46,13 @@
               <td>{{ category.created_at[:10] }}</td>
               <td>
                 <div class="buttons are-small">
-                  <a href="{{ reverse(master, 'todo:category_edit', username=username, category_id=category.sk) }}" 
+                  <a href="{{ reverse(master, 'todo:category_edit', username=username, category_id=category.id) }}" 
                      class="button is-info">
                     <span class="icon">
                       <i class="fas fa-edit"></i>
                     </span>
                   </a>
-                  <a href="{{ reverse(master, 'todo:category_delete', username=username, category_id=category.sk) }}" 
+                  <a href="{{ reverse(master, 'todo:category_delete', username=username, category_id=category.id) }}" 
                      class="button is-danger"
                      onclick="return confirm('このカテゴリーを削除しますか？')">
                     <span class="icon">
