@@ -31,12 +31,12 @@ class CategoryForm(Form):
     ])
     
     color = SelectField('Color', choices=[
-        ('blue', 'Blue'),
-        ('green', 'Green'),
-        ('red', 'Red'),
-        ('yellow', 'Yellow'),
-        ('purple', 'Purple'),
-        ('orange', 'Orange'),
-        ('pink', 'Pink'),
-        ('gray', 'Gray')
-    ], default='blue')
+        ('primary', 'Blue (Primary)'),
+        ('info', 'Light Blue (Info)'),
+        ('success', 'Green (Success)'),
+        ('warning', 'Yellow (Warning)'),
+        ('danger', 'Red (Danger)'),
+        ('link', 'Dark Blue (Link)'),
+        ('light', 'Light Gray'),
+        ('dark', 'Dark Gray')
+    ], default='primary')
