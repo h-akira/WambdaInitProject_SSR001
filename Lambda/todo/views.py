@@ -90,38 +90,7 @@ def create_category_item(username, category_data):
 
 @login_required
 def dashboard(master, username):
-    """ダッシュボードページ"""
-    if master.request.username != username:
-        return redirect(master, "accounts:login")
-    
-    # 最近のTodos取得 (新設計を使用)
-    all_todos = get_user_data_by_type(username, 'todo')
-    
-    # 完了/未完了の統計
-    total_todos = len(all_todos)
-    completed_todos = len([t for t in all_todos if t.get('completed', False)])
-    pending_todos = total_todos - completed_todos
-    
-    # 優先度別統計
-    priority_stats = {"high": 0, "medium": 0, "low": 0}
-    for todo in all_todos:
-        priority = todo.get('priority', 'medium')
-        priority_stats[priority] = priority_stats.get(priority, 0) + 1
-    
-    context = {
-        'username': username,
-        'total_todos': total_todos,
-        'completed_todos': completed_todos,
-        'pending_todos': pending_todos,
-        'priority_stats': priority_stats,
-        'recent_todos': all_todos[:5]  # 最新5件
-    }
-    
-    return render(master, 'todo/dashboard.html', context)
-
-@login_required
-def todo_list(master, username):
-    """Todo一覧ページ"""
+    """統合ダッシュボード・Todo管理ページ"""
     if master.request.username != username:
         return redirect(master, "accounts:login")
     
@@ -144,16 +113,33 @@ def todo_list(master, username):
     if filter_category != 'all':
         todos = [t for t in todos if t.get('category_id') == filter_category]
     
+    # 統計計算（フィルタリング前の全データで）
+    all_todos = get_user_data_by_type(username, 'todo')
+    total_todos = len(all_todos)
+    completed_todos = len([t for t in all_todos if t.get('completed', False)])
+    pending_todos = total_todos - completed_todos
+    
+    # 優先度別統計
+    priority_stats = {"high": 0, "medium": 0, "low": 0}
+    for todo in all_todos:
+        priority = todo.get('priority', 'medium')
+        priority_stats[priority] = priority_stats.get(priority, 0) + 1
+    
     context = {
         'username': username,
         'todos': todos,
         'categories': categories,
         'filter_status': filter_status,
         'filter_priority': filter_priority,
-        'filter_category': filter_category
+        'filter_category': filter_category,
+        'total_todos': total_todos,
+        'completed_todos': completed_todos,
+        'pending_todos': pending_todos,
+        'priority_stats': priority_stats
     }
     
-    return render(master, 'todo/todo_list.html', context)
+    return render(master, 'todo/dashboard.html', context)
+
 
 @login_required
 def todo_create(master, username):
@@ -177,7 +163,7 @@ def todo_create(master, username):
             
             item = create_todo_item(username, todo_data)
             put_data(item)
-            return redirect(master, "todo:todo_list", username=username)
+            return redirect(master, "todo:dashboard", username=username)
     else:
         form = TodoForm()
     
@@ -216,7 +202,7 @@ def todo_edit(master, username, todo_id):
             todo['updated_at'] = now.isoformat()
             
             put_data(todo)
-            return redirect(master, "todo:todo_list", username=username)
+            return redirect(master, "todo:dashboard", username=username)
     else:
         form = TodoForm(data={
             'title': todo.get('title', ''),
@@ -246,7 +232,7 @@ def todo_delete(master, username, todo_id):
         return render(master, 'not_found.html', {}, code=404)
     
     delete_data_by_pk_sk(f"user#{username}", f"todo#{todo_id}")
-    return redirect(master, "todo:todo_list", username=username)
+    return redirect(master, "todo:dashboard", username=username)
 
 @login_required
 def todo_toggle_complete(master, username, todo_id):
@@ -260,7 +246,7 @@ def todo_toggle_complete(master, username, todo_id):
         todo['updated_at'] = datetime.now(timezone.utc).isoformat()
         put_data(todo)
     
-    return redirect(master, "todo:todo_list", username=username)
+    return redirect(master, "todo:dashboard", username=username)
 
 @login_required
 def category_list(master, username):

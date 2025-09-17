@@ -1,16 +1,15 @@
 from wambda.urls import Path
 from .views import (
-    todo_list, todo_create, todo_edit, todo_delete, todo_toggle_complete,
+    todo_create, todo_edit, todo_delete, todo_toggle_complete,
     category_list, category_create, category_edit, category_delete,
     dashboard
 )
 
 urlpatterns = [
-    # Dashboard
+    # Dashboard (統合Todo管理)
     Path("{username}/dashboard", dashboard, name="dashboard"),
     
     # Todo management
-    Path("{username}/todos", todo_list, name="todo_list"),
     Path("{username}/todos/create", todo_create, name="todo_create"),
     Path("{username}/todos/{todo_id}/edit", todo_edit, name="todo_edit"),
     Path("{username}/todos/{todo_id}/delete", todo_delete, name="todo_delete"),

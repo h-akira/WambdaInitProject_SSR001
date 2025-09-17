@@ -40,98 +40,159 @@
       </div>
     </div>
     
-    <!-- クイックアクション -->
+    <!-- アクションとフィルター -->
     <div class="box">
-      <h2 class="title is-4">クイックアクション</h2>
-      <div class="buttons">
-        <a href="{{ reverse(master, 'todo:todo_create', username=username) }}" class="button is-primary">
-          <span class="icon">
-            <i class="fas fa-plus"></i>
-          </span>
-          <span>新しいTodo</span>
-        </a>
-        <a href="{{ reverse(master, 'todo:todo_list', username=username) }}" class="button is-info">
-          <span class="icon">
-            <i class="fas fa-list"></i>
-          </span>
-          <span>Todo一覧</span>
-        </a>
-        <a href="{{ reverse(master, 'todo:category_list', username=username) }}" class="button is-link">
-          <span class="icon">
-            <i class="fas fa-tags"></i>
-          </span>
-          <span>カテゴリー管理</span>
-        </a>
+      <div class="level">
+        <div class="level-left">
+          <div class="level-item">
+            <a href="{{ reverse(master, 'todo:todo_create', username=username) }}" class="button is-primary">
+              <span class="icon">
+                <i class="fas fa-plus"></i>
+              </span>
+              <span>新しいTodo</span>
+            </a>
+          </div>
+          <div class="level-item">
+            <a href="{{ reverse(master, 'todo:category_list', username=username) }}" class="button is-link">
+              <span class="icon">
+                <i class="fas fa-tags"></i>
+              </span>
+              <span>カテゴリー管理</span>
+            </a>
+          </div>
+        </div>
       </div>
+      
+      <!-- フィルター -->
+      <form method="get">
+        <div class="field is-grouped">
+          <div class="control">
+            <div class="select">
+              <select name="status">
+                <option value="all" {% if filter_status == 'all' %}selected{% endif %}>すべて</option>
+                <option value="pending" {% if filter_status == 'pending' %}selected{% endif %}>未完了</option>
+                <option value="completed" {% if filter_status == 'completed' %}selected{% endif %}>完了済み</option>
+              </select>
+            </div>
+          </div>
+          <div class="control">
+            <div class="select">
+              <select name="priority">
+                <option value="all" {% if filter_priority == 'all' %}selected{% endif %}>すべての優先度</option>
+                <option value="high" {% if filter_priority == 'high' %}selected{% endif %}>高</option>
+                <option value="medium" {% if filter_priority == 'medium' %}selected{% endif %}>中</option>
+                <option value="low" {% if filter_priority == 'low' %}selected{% endif %}>低</option>
+              </select>
+            </div>
+          </div>
+          <div class="control">
+            <div class="select">
+              <select name="category">
+                <option value="all" {% if filter_category == 'all' %}selected{% endif %}>すべてのカテゴリー</option>
+                {% for category in categories %}
+                <option value="{{ category.id }}" {% if filter_category == category.id %}selected{% endif %}>{{ category.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="control">
+            <button type="submit" class="button is-info">フィルター</button>
+          </div>
+        </div>
+      </form>
     </div>
     
-    <!-- 最近のTodo -->
-    {% if recent_todos %}
+    <!-- Todo一覧 -->
+    {% if todos %}
     <div class="box">
-      <h2 class="title is-4">最近のTodo</h2>
-      <div class="table-container">
-        <table class="table is-fullwidth">
-          <thead>
-            <tr>
-              <th>タイトル</th>
-              <th>優先度</th>
-              <th>状態</th>
-              <th>作成日</th>
-              <th>アクション</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for todo in recent_todos %}
-            <tr>
-              <td>
-                <a href="{{ reverse(master, 'todo:todo_edit', username=username, todo_id=todo.id) }}" class="has-text-link">
-                  {{ todo.title }}
-                </a>
-              </td>
-              <td>
-                {% if todo.priority == 'high' %}
-                  <span class="tag is-danger">高</span>
-                {% elif todo.priority == 'medium' %}
-                  <span class="tag is-warning">中</span>
-                {% else %}
-                  <span class="tag is-info">低</span>
-                {% endif %}
-              </td>
-              <td>
-                {% if todo.completed %}
-                  <span class="tag is-success">完了</span>
-                {% else %}
-                  <span class="tag is-light">未完了</span>
-                {% endif %}
-              </td>
-              <td>{{ todo.created_at[:10] }}</td>
-              <td>
-                <div class="buttons are-small">
-                  <a href="{{ reverse(master, 'todo:todo_toggle', username=username, todo_id=todo.id) }}" 
-                     class="button is-small {% if todo.completed %}is-warning{% else %}is-success{% endif %}"
-                     title="{% if todo.completed %}未完了にする{% else %}完了にする{% endif %}">
-                    <span class="icon">
-                      {% if todo.completed %}
-                        <i class="fas fa-undo"></i>
-                      {% else %}
+      {% for todo in todos %}
+      <div class="card mb-4">
+        <div class="card-content">
+          <div class="level">
+            <div class="level-left">
+              <div class="level-item">
+                <div>
+                  <div class="todo-title {% if todo.completed %}is-completed{% endif %}">
+                    {% if todo.completed %}
+                      <span class="icon has-text-success">
                         <i class="fas fa-check"></i>
+                      </span>
+                    {% endif %}
+                    <span class="todo-title-text">{{ todo.title }}</span>
+                  </div>
+                  {% if todo.description %}
+                  <p class="subtitle is-6 {% if todo.completed %}has-text-grey-light{% endif %}">{{ todo.description }}</p>
+                  {% endif %}
+                  <div class="tags">
+                    {% if todo.priority == 'high' %}
+                      <span class="tag is-danger">高優先度</span>
+                    {% elif todo.priority == 'medium' %}
+                      <span class="tag is-warning">中優先度</span>
+                    {% else %}
+                      <span class="tag is-info">低優先度</span>
+                    {% endif %}
+                    
+                    {% if todo.completed %}
+                      <span class="tag is-success">完了</span>
+                    {% else %}
+                      <span class="tag is-light">未完了</span>
+                    {% endif %}
+                    
+                    {% for category in categories %}
+                      {% if category.id == todo.category_id %}
+                        <span class="tag is-{{ category.color }}">{{ category.name }}</span>
                       {% endif %}
-                    </span>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+                <div class="buttons">
+                  <a href="{{ reverse(master, 'todo:todo_toggle', username=username, todo_id=todo.id) }}" 
+                     class="button is-small {% if todo.completed %}is-warning{% else %}is-success{% endif %}">
+                    {% if todo.completed %}
+                      <span class="icon">
+                        <i class="fas fa-undo"></i>
+                      </span>
+                    {% else %}
+                      <span class="icon">
+                        <i class="fas fa-check"></i>
+                      </span>
+                    {% endif %}
                   </a>
                   <a href="{{ reverse(master, 'todo:todo_edit', username=username, todo_id=todo.id) }}" 
-                     class="button is-small is-info"
-                     title="編集">
+                     class="button is-small is-info">
                     <span class="icon">
                       <i class="fas fa-edit"></i>
                     </span>
                   </a>
+                  <a href="{{ reverse(master, 'todo:todo_delete', username=username, todo_id=todo.id) }}" 
+                     class="button is-small is-danger"
+                     onclick="return confirm('このTodoを削除しますか？')">
+                    <span class="icon">
+                      <i class="fas fa-trash"></i>
+                    </span>
+                  </a>
                 </div>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="box has-text-centered">
+      <p class="title is-4 has-text-grey-light">Todoがありません</p>
+      <p class="subtitle is-6 has-text-grey-light">新しいTodoを作成してみましょう</p>
+      <a href="{{ reverse(master, 'todo:todo_create', username=username) }}" class="button is-primary">
+        <span class="icon">
+          <i class="fas fa-plus"></i>
+        </span>
+        <span>最初のTodoを作成</span>
+      </a>
     </div>
     {% endif %}
   </div>
