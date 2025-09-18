@@ -1,6 +1,6 @@
 from wambda.shortcuts import render, redirect
-from wambda.authenticate import login, signup, verify, MaintenanceOptionError
-from .forms import LoginForm, SignupForm, VerifyForm
+from wambda.authenticate import login, signup, verify, change_password, MaintenanceOptionError
+from .forms import LoginForm, SignupForm, VerifyForm, ChangePasswordForm
 
 def login_view(master):
     if master.request.method == 'POST':
@@ -118,3 +118,44 @@ def logout_view(master):
     master.logger.debug(f"Redirect response: {redirect_response}")
     
     return redirect_response
+
+def change_password_view(master):
+    # Authentication check
+    if not master.request.auth:
+        return redirect(master, 'accounts:login')
+    
+    if master.request.method == 'POST':
+        form = ChangePasswordForm(master.request.get_form_data())
+    else:
+        form = ChangePasswordForm()
+    
+    context = {'form': form}
+    
+    # URLパラメータからメッセージを取得
+    if master.request.method == 'GET':
+        query_params = master.event.get('queryStringParameters') or {}
+        message_type = query_params.get('message', '')
+        
+        # メッセージ設定
+        if message_type == 'success':
+            context['message'] = 'パスワードが正常に変更されました'
+    
+    if master.request.method == 'POST' and form.validate():
+        current_password = form.current_password.data
+        new_password = form.new_password.data
+        
+        try:
+            if change_password(master, current_password, new_password):
+                # パスワード変更成功後はリダイレクトしてメッセージを表示
+                return redirect(master, 'accounts:change_password', query_params={
+                    'message': 'success'
+                })
+            else:
+                context['error'] = 'パスワード変更に失敗しました。現在のパスワードを確認してください。'
+                return render(master, 'accounts/change_password.html', context)
+        except Exception as e:
+            master.logger.exception(f"パスワード変更エラー: {e}")
+            context['error'] = 'パスワード変更中にエラーが発生しました。'
+            return render(master, 'accounts/change_password.html', context)
+    
+    return render(master, 'accounts/change_password.html', context)

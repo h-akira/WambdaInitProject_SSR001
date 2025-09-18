@@ -41,3 +41,30 @@ class VerifyForm(Form):
     validators=[DataRequired(), Length(min=6, max=6)],
     label='確認コード'
   )
+
+class ChangePasswordForm(Form):
+  current_password = PasswordField(
+    render_kw={'style': 'width: 200px;'},
+    validators=[DataRequired(), Length(min=8, max=63)],
+    label='現在のパスワード'
+  )
+  new_password = PasswordField(
+    render_kw={'style': 'width: 200px;'},
+    validators=[DataRequired(), Length(min=8, max=63)],
+    label='新しいパスワード'
+  )
+  confirm_password = PasswordField(
+    render_kw={'style': 'width: 200px;'},
+    validators=[DataRequired(), Length(min=8, max=63)],
+    label='新しいパスワード（確認）'
+  )
+
+  def validate(self):
+    if not super().validate():
+      return False
+    
+    if self.new_password.data != self.confirm_password.data:
+      self.confirm_password.errors.append('パスワードが一致しません')
+      return False
+    
+    return True
