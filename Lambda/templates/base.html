@@ -40,7 +40,20 @@
       </div>
       <div class="navbar-end">
         {% if master.request.auth %}
-        <a class="navbar-item" href="{{ get_logout_url(master) }}">{{ master.request.username }} - Logout</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link">
+            {{ master.request.username }}
+          </a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="{{ reverse(master, 'accounts:change_password') }}">
+              パスワード変更
+            </a>
+            <hr class="navbar-divider">
+            <a class="navbar-item" href="{{ get_logout_url(master) }}">
+              ログアウト
+            </a>
+          </div>
+        </div>
         {% else %}
         <a href="{{ get_login_url(master) }}" class="navbar-item">
           Log in

@@ -1,6 +1,6 @@
 from wambda.shortcuts import render, redirect
-from wambda.authenticate import login, signup, verify, change_password, MaintenanceOptionError
-from .forms import LoginForm, SignupForm, VerifyForm, ChangePasswordForm
+from wambda.authenticate import login, signup, verify, change_password, forgot_password, confirm_forgot_password, MaintenanceOptionError
+from .forms import LoginForm, SignupForm, VerifyForm, ChangePasswordForm, ForgotPasswordForm, ResetPasswordForm
 
 def login_view(master):
     if master.request.method == 'POST':
@@ -18,6 +18,8 @@ def login_view(master):
         # メッセージ設定
         if message_type == 'verify_success':
             context['message'] = 'メールアドレスの確認が完了しました'
+        elif message_type == 'password_reset_success':
+            context['message'] = 'パスワードリセットが完了しました。新しいパスワードでログインしてください。'
     
     if master.request.method == 'POST' and form.validate():
         username = form.username.data
@@ -159,3 +161,73 @@ def change_password_view(master):
             return render(master, 'accounts/change_password.html', context)
     
     return render(master, 'accounts/change_password.html', context)
+
+def forgot_password_view(master):
+    if master.request.method == 'POST':
+        form = ForgotPasswordForm(master.request.get_form_data())
+    else:
+        form = ForgotPasswordForm()
+    
+    context = {'form': form}
+    
+    if master.request.method == 'POST' and form.validate():
+        username = form.username.data
+        
+        try:
+            if forgot_password(master, username):
+                # パスワードリセット確認コード送信成功後はリセット画面にリダイレクト
+                return redirect(master, 'accounts:reset_password', query_params={
+                    'username': username,
+                    'message': 'code_sent'
+                })
+            else:
+                context['error'] = 'パスワードリセット確認コードの送信に失敗しました。ユーザー名を確認してください。'
+                return render(master, 'accounts/forgot_password.html', context)
+        except Exception as e:
+            master.logger.exception(f"パスワードリセット確認コード送信エラー: {e}")
+            context['error'] = 'パスワードリセット確認コード送信中にエラーが発生しました。'
+            return render(master, 'accounts/forgot_password.html', context)
+    
+    return render(master, 'accounts/forgot_password.html', context)
+
+def reset_password_view(master):
+    if master.request.method == 'POST':
+        form = ResetPasswordForm(master.request.get_form_data())
+    else:
+        form = ResetPasswordForm()
+    
+    context = {'form': form}
+    
+    # URLパラメータからユーザー名とメッセージを取得
+    if master.request.method == 'GET':
+        query_params = master.event.get('queryStringParameters') or {}
+        username = query_params.get('username', '')
+        message_type = query_params.get('message', '')
+        
+        if username:
+            form.username.data = username
+        
+        # メッセージ設定
+        if message_type == 'code_sent':
+            context['message'] = 'パスワードリセット確認コードをメールで送信しました。'
+    
+    if master.request.method == 'POST' and form.validate():
+        username = form.username.data
+        confirmation_code = form.confirmation_code.data
+        new_password = form.new_password.data
+        
+        try:
+            if confirm_forgot_password(master, username, confirmation_code, new_password):
+                # パスワードリセット成功後はログイン画面にリダイレクト
+                return redirect(master, 'accounts:login', query_params={
+                    'message': 'password_reset_success'
+                })
+            else:
+                context['error'] = 'パスワードリセットに失敗しました。確認コードまたはユーザー名を確認してください。'
+                return render(master, 'accounts/reset_password.html', context)
+        except Exception as e:
+            master.logger.exception(f"パスワードリセットエラー: {e}")
+            context['error'] = 'パスワードリセット中にエラーが発生しました。'
+            return render(master, 'accounts/reset_password.html', context)
+    
+    return render(master, 'accounts/reset_password.html', context)
