@@ -231,3 +231,15 @@ def reset_password_view(master):
             return render(master, 'accounts/reset_password.html', context)
     
     return render(master, 'accounts/reset_password.html', context)
+
+def user_profile_view(master):
+    # Authentication check
+    if not master.request.auth:
+        return redirect(master, 'accounts:login')
+    
+    context = {
+        'username': master.request.username,
+        'user_info': master.request.decode_token if hasattr(master.request, 'decode_token') else {}
+    }
+    
+    return render(master, 'accounts/user_profile.html', context)

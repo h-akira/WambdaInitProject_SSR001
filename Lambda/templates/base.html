@@ -40,11 +40,8 @@
       </div>
       <div class="navbar-end">
         {% if master.request.auth %}
-        <span class="navbar-item has-text-white">
+        <a class="navbar-item" href="{{ reverse(master, 'accounts:profile') }}">
           <i class="fas fa-user"></i>&nbsp;{{ master.request.username }}
-        </span>
-        <a class="navbar-item" href="{{ reverse(master, 'accounts:change_password') }}">
-          <i class="fas fa-key"></i>&nbsp;パスワード変更
         </a>
         <a class="navbar-item" href="{{ get_logout_url(master) }}">
           <i class="fas fa-sign-out-alt"></i>&nbsp;ログアウト
