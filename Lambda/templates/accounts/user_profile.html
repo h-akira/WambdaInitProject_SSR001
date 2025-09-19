@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}ユーザー情報 - WAMBDA Sample Project{% endblock title %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-two-thirds">
+                <div class="card">
+                    <header class="card-header">
+                        <p class="card-header-title">
+                            <span class="icon">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            ユーザー情報
+                        </p>
+                    </header>
+                    <div class="card-content">
+                        <!-- User Information Section -->
+                        <div class="content">
+                            <h4 class="title is-4">アカウント情報</h4>
+                            
+                            <div class="field">
+                                <label class="label">ユーザー名</label>
+                                <div class="control">
+                                    <p class="has-text-weight-semibold">{{ username }}</p>
+                                </div>
+                            </div>
+                            
+                            {% if user_info.email %}
+                            <div class="field">
+                                <label class="label">メールアドレス</label>
+                                <div class="control">
+                                    <p class="has-text-weight-semibold">{{ user_info.email }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if user_info.sub %}
+                            <div class="field">
+                                <label class="label">ユーザーID</label>
+                                <div class="control">
+                                    <p class="has-text-grey is-family-monospace">{{ user_info.sub }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <hr>
+                        
+                        <!-- Action Buttons Section -->
+                        <div class="content">
+                            <h4 class="title is-4">アカウント管理</h4>
+                            
+                            <div class="buttons">
+                                <a href="{{ reverse(master, 'accounts:change_password') }}" class="button is-primary">
+                                    <span class="icon">
+                                        <i class="fas fa-key"></i>
+                                    </span>
+                                    <span>パスワード変更</span>
+                                </a>
+                                
+                                <a href="{{ get_logout_url(master) }}" class="button is-light">
+                                    <span class="icon">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                    </span>
+                                    <span>ログアウト</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="card-footer">
+                        <a href="{{ reverse(master, 'todo:dashboard', username=master.request.username) }}" class="card-footer-item">
+                            <span class="icon">
+                                <i class="fas fa-tachometer-alt"></i>
+                            </span>
+                            <span>ダッシュボードに戻る</span>
+                        </a>
+                        <a href="{{ reverse(master, 'home') }}" class="card-footer-item">
+                            <span class="icon">
+                                <i class="fas fa-home"></i>
+                            </span>
+                            <span>ホームに戻る</span>
+                        </a>
+                    </footer>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}
