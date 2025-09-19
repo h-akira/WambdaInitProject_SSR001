@@ -220,7 +220,6 @@ Resources:
             Action: "sts:AssumeRole"
       ManagedPolicyArns:
         - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-        - "arn:aws:iam::aws:policy/AmazonCognitoPowerUser"
       Policies:
         - PolicyName: "policy-wambda-ssr001-lambda-exec"
           PolicyDocument:
@@ -234,6 +233,17 @@ Resources:
                   - "dynamodb:Query"
                   - "dynamodb:UpdateItem"
                   - "dynamodb:DeleteItem"
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - "cognito-idp:InitiateAuth"
+                  - "cognito-idp:ForgotPassword"
+                  - "cognito-idp:ConfirmForgotPassword"
+                  - "cognito-idp:ChangePassword"
+                  - "cognito-idp:SignUp"
+                  - "cognito-idp:ConfirmSignUp"
+                  - "cognito-idp:AdminGetUser"
+                  - "cognito-idp:GlobalSignOut"
                 Resource: "*"
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group
