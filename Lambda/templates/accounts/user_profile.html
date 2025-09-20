@@ -17,6 +17,13 @@
                         </p>
                     </header>
                     <div class="card-content">
+                        {% if message %}
+                        <div class="notification is-success">
+                            <button class="delete"></button>
+                            {{ message }}
+                        </div>
+                        {% endif %}
+
                         <!-- User Information Section -->
                         <div class="content">
                             <h4 class="title is-4">アカウント情報</h4>
