@@ -20,4 +20,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Handle notification delete buttons
+  const $notificationDeletes = Array.prototype.slice.call(document.querySelectorAll('.notification .delete'), 0);
+
+  $notificationDeletes.forEach( el => {
+    el.addEventListener('click', () => {
+      // Remove the notification element
+      const $notification = el.closest('.notification');
+      if ($notification) {
+        $notification.remove();
+      }
+    });
+  });
+
 });
