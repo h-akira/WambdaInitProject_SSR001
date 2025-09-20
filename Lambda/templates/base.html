@@ -19,44 +19,44 @@
   </head>
 	<body>  
 
-  <nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation" style="width: 100%;">
-    <div class="navbar-brand">
-      <a class="navbar-item" href="{{ reverse(master, 'home') }}">
-        <strong>WAMBDA Sample</strong>
-      </a>
-      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-      </a>
-    </div>
-    <div id="navbarBasicExample" class="navbar-menu">
-      <div class="navbar-start">
-        {% if master.request.auth %}
-        <a class="navbar-item" href="{{ reverse(master, 'todo:dashboard', username=master.request.username) }}">Todo管理</a>
-        <a class="navbar-item" href="{{ reverse(master, 'todo:category_list', username=master.request.username) }}">カテゴリー</a>
-        {% endif %}
+    <nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation" style="width: 100%;">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="{{ reverse(master, 'home') }}">
+          <strong>WAMBDA Sample</strong>
+        </a>
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
       </div>
-      <div class="navbar-end">
-        {% if master.request.auth %}
-        <a class="navbar-item" href="{{ reverse(master, 'accounts:profile') }}">
-          <i class="fas fa-user"></i>&nbsp;{{ master.request.username }}
-        </a>
-        <a class="navbar-item" href="{{ get_logout_url(master) }}">
-          <i class="fas fa-sign-out-alt"></i>&nbsp;ログアウト
-        </a>
-        {% else %}
-        <a href="{{ get_login_url(master) }}" class="navbar-item">
-          <i class="fas fa-sign-in-alt"></i>&nbsp;Log in
-        </a>
-        <a href="{{ get_signup_url(master) }}" class="navbar-item">
-          <i class="fas fa-user-plus"></i>&nbsp;Sign up
-        </a>
-        {% endif %}
+      <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+          {% if master.request.auth %}
+          <a class="navbar-item" href="{{ reverse(master, 'todo:dashboard', username=master.request.username) }}">Todo管理</a>
+          <a class="navbar-item" href="{{ reverse(master, 'todo:category_list', username=master.request.username) }}">カテゴリー</a>
+          {% endif %}
+        </div>
+        <div class="navbar-end">
+          {% if master.request.auth %}
+          <a class="navbar-item" href="{{ reverse(master, 'accounts:profile') }}">
+            <i class="fas fa-user"></i>&nbsp;{{ master.request.username }}
+          </a>
+          <a class="navbar-item" href="{{ get_logout_url(master) }}">
+            <i class="fas fa-sign-out-alt"></i>&nbsp;ログアウト
+          </a>
+          {% else %}
+          <a href="{{ get_login_url(master) }}" class="navbar-item">
+            <i class="fas fa-sign-in-alt"></i>&nbsp;Log in
+          </a>
+          <a href="{{ get_signup_url(master) }}" class="navbar-item">
+            <i class="fas fa-user-plus"></i>&nbsp;Sign up
+          </a>
+          {% endif %}
+        </div>
       </div>
-    </div>
-  </nav>
-  {% block content %}{% endblock content %}
+    </nav>
+    {% block content %}{% endblock content %}
     
     <!-- FontAwesome Icons are loaded via CSS CDN above -->
     <!-- Custom JavaScript -->
