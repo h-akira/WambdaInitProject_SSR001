@@ -6,6 +6,14 @@
 {% block title %}WAMBDA Sample Project{% endblock title %}
 
 {% block content %}
+<!-- Account Deletion Success Message -->
+{% if message %}
+<div class="notification is-{{ message_type }}">
+    <button class="delete"></button>
+    {{ message }}
+</div>
+{% endif %}
+
 <section class="hero is-primary is-medium">
   <div class="hero-body">
     <div class="container has-text-centered">

@@ -67,12 +67,19 @@
                                     </span>
                                     <span>パスワード変更</span>
                                 </a>
-                                
+
                                 <a href="{{ get_logout_url(master) }}" class="button is-light">
                                     <span class="icon">
                                         <i class="fas fa-sign-out-alt"></i>
                                     </span>
                                     <span>ログアウト</span>
+                                </a>
+
+                                <a href="{{ reverse(master, 'accounts:delete_account') }}" class="button is-danger" onclick="return confirm('本当にアカウントを削除しますか？この操作は元に戻せません。')">
+                                    <span class="icon">
+                                        <i class="fas fa-trash"></i>
+                                    </span>
+                                    <span>アカウント削除</span>
                                 </a>
                             </div>
                         </div>

@@ -1,6 +1,6 @@
 from wambda.shortcuts import render, redirect
 from wambda.authenticate import login, signup, verify, change_password, forgot_password, confirm_forgot_password, MaintenanceOptionError
-from .forms import LoginForm, SignupForm, VerifyForm, ChangePasswordForm, ForgotPasswordForm, ResetPasswordForm
+from .forms import LoginForm, SignupForm, VerifyForm, ChangePasswordForm, ForgotPasswordForm, ResetPasswordForm, DeleteAccountForm
 
 def login_view(master):
     if master.request.method == 'POST':
@@ -243,3 +243,71 @@ def user_profile_view(master):
         context['message'] = 'パスワードが正常に変更されました'
 
     return render(master, 'accounts/user_profile.html', context)
+
+def delete_account_view(master):
+    # Authentication check
+    if not master.request.auth:
+        return redirect(master, 'accounts:login')
+
+    if master.request.method == 'POST':
+        form = DeleteAccountForm(master.request.get_form_data())
+    else:
+        form = DeleteAccountForm()
+
+    context = {'form': form}
+
+    if master.request.method == 'POST' and form.validate():
+        current_password = form.current_password.data
+        username = master.request.username
+
+        try:
+            # パスワード認証を行う
+            if login(master, username, current_password):
+                # 実際のアカウント削除処理（Cognitoから削除）
+                import boto3
+                from botocore.exceptions import ClientError
+                from wambda.authenticate import get_cognito_settings
+
+                client = boto3.client('cognito-idp', region_name=master.settings.REGION)
+                cognito_settings = get_cognito_settings(master)
+
+                try:
+                    # ユーザーを削除
+                    client.admin_delete_user(
+                        UserPoolId=cognito_settings['USER_POOL_ID'],
+                        Username=username
+                    )
+
+                    master.logger.info(f"アカウント削除成功: ユーザー {username}")
+
+                    # サインアウトしてホームページにリダイレクト
+                    from wambda.authenticate import sign_out
+                    try:
+                        sign_out(master)
+                    except Exception as e:
+                        master.logger.warning(f"Delete account logout warning: {e}")
+                        # 例外が発生した場合も強制的にCookie削除
+                        master.request.auth = False
+                        master.request.username = None
+                        master.request.clean_cookie = True
+
+                    return redirect(master, 'home', query_params={
+                        'message': 'account_deleted'
+                    })
+
+                except ClientError as e:
+                    error_code = e.response['Error']['Code']
+                    master.logger.error(f"アカウント削除エラー: {error_code}")
+                    context['error'] = 'アカウント削除中にエラーが発生しました。'
+                    return render(master, 'accounts/delete_account.html', context)
+
+            else:
+                context['error'] = 'パスワードが正しくありません。'
+                return render(master, 'accounts/delete_account.html', context)
+
+        except Exception as e:
+            master.logger.exception(f"アカウント削除エラー: {e}")
+            context['error'] = 'アカウント削除中にエラーが発生しました。'
+            return render(master, 'accounts/delete_account.html', context)
+
+    return render(master, 'accounts/delete_account.html', context)

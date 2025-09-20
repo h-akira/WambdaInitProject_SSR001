@@ -243,6 +243,7 @@ Resources:
                   - "cognito-idp:SignUp"
                   - "cognito-idp:ConfirmSignUp"
                   - "cognito-idp:AdminGetUser"
+                  - "cognito-idp:AdminDeleteUser"
                   - "cognito-idp:GlobalSignOut"
                 Resource: "*"
   ApplicationResourceGroup:

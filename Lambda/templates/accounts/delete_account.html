@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}アカウント削除 - WAMBDA Sample Project{% endblock title %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-half">
+                <div class="card">
+                    <header class="card-header">
+                        <p class="card-header-title">
+                            <span class="icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </span>
+                            アカウント削除
+                        </p>
+                    </header>
+                    <div class="card-content">
+                        <!-- Warning Message -->
+                        <div class="notification is-warning">
+                            <div class="content">
+                                <h5 class="title is-5">⚠️ 重要な警告</h5>
+                                <p>この操作は<strong>元に戻すことができません</strong>。アカウントを削除すると、以下のデータが永久に失われます：</p>
+                                <ul>
+                                    <li>すべてのTodoリスト</li>
+                                    <li>カテゴリー設定</li>
+                                    <li>アカウント情報</li>
+                                    <li>その他の関連データ</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        {% if error %}
+                        <div class="notification is-danger">
+                            <button class="delete"></button>
+                            {{ error }}
+                        </div>
+                        {% endif %}
+
+                        <!-- Delete Form -->
+                        <form method="post">
+                            <div class="field">
+                                <label class="label">{{ form.current_password.label }}</label>
+                                <div class="control has-icons-left">
+                                    {{ form.current_password(class="input") }}
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-lock"></i>
+                                    </span>
+                                </div>
+                                {% if form.current_password.errors %}
+                                <p class="help is-danger">
+                                    {% for error in form.current_password.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </p>
+                                {% endif %}
+                                <p class="help">本人確認のため、現在のパスワードを入力してください</p>
+                            </div>
+
+                            <div class="field">
+                                <label class="label">{{ form.confirmation.label }}</label>
+                                <div class="control">
+                                    {{ form.confirmation(class="input", placeholder="DELETE") }}
+                                </div>
+                                {% if form.confirmation.errors %}
+                                <p class="help is-danger">
+                                    {% for error in form.confirmation.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </p>
+                                {% endif %}
+                                <p class="help">削除を確認するため、<code>DELETE</code>と入力してください</p>
+                            </div>
+
+                            <hr>
+
+                            <div class="field is-grouped">
+                                <div class="control">
+                                    <button type="submit" class="button is-danger">
+                                        <span class="icon">
+                                            <i class="fas fa-trash"></i>
+                                        </span>
+                                        <span>アカウントを完全に削除する</span>
+                                    </button>
+                                </div>
+                                <div class="control">
+                                    <a href="{{ reverse(master, 'accounts:profile') }}" class="button is-light">
+                                        <span class="icon">
+                                            <i class="fas fa-arrow-left"></i>
+                                        </span>
+                                        <span>キャンセル</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}
