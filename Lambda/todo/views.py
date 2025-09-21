@@ -98,10 +98,9 @@ def dashboard(master, username):
     categories = get_user_data_by_type(username, 'category')
     
     # フィルタリング
-    query_params = master.event.get('queryStringParameters') or {}
-    filter_status = query_params.get('status', 'all')
-    filter_priority = query_params.get('priority', 'all')
-    filter_category = query_params.get('category', 'all')
+    filter_status = master.request.query_params.get('status', 'all')
+    filter_priority = master.request.query_params.get('priority', 'all')
+    filter_category = master.request.query_params.get('category', 'all')
     
     if filter_status != 'all':
         completed = (filter_status == 'completed')

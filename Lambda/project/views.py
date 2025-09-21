@@ -4,7 +4,7 @@ def home(master):
   context = {}
 
   # URLパラメータからメッセージを取得
-  query_params = master.event.get('queryStringParameters') or {}
+  query_params = master.request.query_params
   message_type = query_params.get('message', '')
 
   # メッセージ設定
