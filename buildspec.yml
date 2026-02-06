@@ -8,8 +8,8 @@ env:
     WAMBDA_DENY_SIGNUP: "false"
     WAMBDA_DENY_LOGIN: "false"
     WAMBDA_LOG_LEVEL: "DEBUG"
-    S3_BUCKET: "wambda-ssr001-main"
-    DYNAMODB_TABLE: "wambda-table-ssr001"
+    S3_BUCKET: "hakira0627-s3-wambda-ssr001-main"
+    DYNAMODB_TABLE: "table-wambda-ssr001-main"
 
 phases:
   install:
