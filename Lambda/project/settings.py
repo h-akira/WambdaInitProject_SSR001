@@ -10,9 +10,9 @@ LOG_LEVEL = os.environ.get('WAMBDA_LOG_LEVEL', 'INFO')  # 環境変数から取�
 
 # 認証周りの設定 - SSMパラメータ名の定義
 COGNITO_SSM_PARAMS = {
-    'USER_POOL_ID': '/Cognito/user_pool_id',
-    'CLIENT_ID': '/Cognito/client_id',
-    'CLIENT_SECRET': '/Cognito/client_secret'
+    'USER_POOL_ID': '/WambdaInit/Cognito/user_pool_id',
+    'CLIENT_ID': '/WambdaInit/Cognito/client_id',
+    'CLIENT_SECRET': '/WambdaInit/Cognito/client_secret'
 }
 REGION = "ap-northeast-1"
 # 
