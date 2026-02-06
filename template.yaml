@@ -91,7 +91,7 @@ Resources:
   ApiGatewayAccountConfigFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub 'wambda-ssr001-${AWS::StackName}-apigateway-account-config'
+      FunctionName: 'lambda-wambda-ssr001-app-apigw-config'
       Runtime: python3.13
       Handler: index.handler
       Role: !GetAtt ApiGatewayAccountConfigRole.Arn
